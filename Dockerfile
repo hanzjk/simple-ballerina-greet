@@ -2,7 +2,7 @@
 FROM ballerina/ballerina:2201.3.5
 
 # Set the working directory in the container
-USER root
+USER 10014
 ADD . /src
 WORKDIR /src
 
