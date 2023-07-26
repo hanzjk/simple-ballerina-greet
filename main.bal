@@ -1,9 +1,11 @@
 import ballerina/io;
-import ballerina/time;
+import ballerina/http;
 
-public function main() {
-    io:println("Hello, World!");
-    var currentTime = time:utcNow();
-    var formattedTime = time:utcToString(currentTime);
-    io:println("Current time: " + formattedTime);
+service / on new http:Listener(8090) {
+    resource function post [string path](http:Request req) returns string|error|http:Response {
+        string payload = check req.getTextPayload();
+        io:println("payload: " + payload);
+        io:println("path: " + path);
+        return payload;
+    }
 }
