@@ -27,7 +27,7 @@
   </distributionManagement>
   <properties>
     <project.scm.id>integration-project</project.scm.id>
-    <project.runtime.version>0.1.0</project.runtime.version>
+    <project.runtime.version>0.10.0</project.runtime.version>
   </properties>
   <build>
     <plugins>
