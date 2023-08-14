@@ -1,0 +1,73 @@
+name: Test Bash Script
+
+on: [push]
+
+jobs:
+  test-script:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Run Bash script
+        run: |
+          #!/bin/bash
+
+          count=0
+          valid_count=0
+          empty_value_count=0
+          zip_files_exist=false
+          car_file_path="."
+
+          # Create temp_folder if it doesn't exist
+          mkdir -p temp_folder
+
+          shopt -s nullglob  # Enable nullglob to handle case with no zip files
+          for car_file in ${car_file_path}/*.car; do
+              zip_files_exist=true
+
+              # Move the car file to temp_folder and rename it to .zip
+              mv "$car_file" "temp_folder/temp.zip"
+
+              # Unzip the file
+              unzip -o "temp_folder/temp.zip" -d temp_folder > /dev/null 2>&1
+
+              # Check if metadata.xml exists in the unzipped folder
+              if [ -e "temp_folder/metadata.xml" ]; then
+                  count=$((count+1))
+                  # Check if mainSequence="..." attribute exists and has a non-empty value
+                  if grep -q 'mainSequence="[^"]*"' "temp_folder/metadata.xml"; then
+                      main_sequence_value=$(grep -o 'mainSequence="[^"]*"' "temp_folder/metadata.xml" | cut -d '"' -f 2)
+                      if [ -z "$main_sequence_value" ]; then
+                          empty_value_count=$((empty_value_count+1))
+                      elif [ -n "$main_sequence_value" ]; then
+                          valid_count=$((valid_count+1))
+                      fi
+                  fi
+              fi
+
+              # Remove the contents of the temporary folder
+              rm -rf temp_folder/*
+          done
+
+          if ! $zip_files_exist; then
+              echo "Error: no .car files found in the directory."
+              exit 1
+          elif [ "$count" -eq 0 ]; then
+              echo "Error: no metadata.xml file found in any .car file."
+              exit 1
+          elif [ "$valid_count" -eq 1 ] && [ "$empty_value_count" -eq 0 ]; then
+              echo "Success: one valid metadata.xml file found with a valid mainSequence attribute."
+              exit 0
+          elif [ "$valid_count" -gt 1 ]; then
+              echo "Error: found $valid_count metadata.xml files with a valid mainSequence attribute, but only one is allowed."
+              exit 1
+          elif [ "$empty_value_count" -ge 1 ]; then
+              echo "Error: found $empty_value_count metadata.xml file(s) with an empty mainSequence attribute."
+              exit 1
+          else
+              echo "Error: found $count metadata.xml files, but none of them have a valid mainSequence attribute."
+              exit 1
+          fi
+          exit 1
