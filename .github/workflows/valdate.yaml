@@ -10,6 +10,56 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
+      - name: Validate MI Version
+        run: |
+          function version_gt() {
+            local ref_version="$1"
+            local input_version="$2"
+            
+            # Split the versions into arrays using dot as the delimiter
+            IFS='.' read -ra ref_version_parts <<< "$ref_version"
+            IFS='.' read -ra input_version_parts <<< "$input_version"
+            
+            # Compare each part of the version
+            for i in "${!ref_version_parts[@]}"; do
+              if [[ ${input_version_parts[$i]} -gt ${ref_version_parts[$i]} ]]; then
+                return 0
+              elif [[ ${input_version_parts[$i]} -lt ${ref_version_parts[$i]} ]]; then
+                return 1
+              fi
+            done
+            
+            # If all parts are equal, input version is not greater
+            return 0
+          }
+
+          subpath="."
+          minimumRuntimeVersion="4.2.0.70"
+
+          # Check if the pom.xml file exists in the subpath
+          if [ -e "$subpath/pom.xml" ]; then
+            # Extract project.runtime.version tag value
+            runtime_version=$(grep '<project.runtime.version>' "$subpath/pom.xml" | sed -e 's/.*<project.runtime.version>\([^<]*\)<\/project.runtime.version>.*/\1/')
+            
+            # Check if project.runtime.version tag is not empty
+            if [ -z "$runtime_version" ]; then
+              echo "Error: <project.runtime.version> is not found or is empty."
+              exit 1
+            fi
+            
+            # Validate if the version is greater than minimumRuntimeVersion
+            if version_gt "$minimumRuntimeVersion" "$runtime_version"; then
+              echo "Success: project has a valid runtime version."
+              exit 0
+            else
+              echo "Error: runtime version in the project version ($runtime_version) is older than the minimum runtime version ($minimumRuntimeVersion)."
+              exit 1
+            fi
+          else
+            echo "Error: pom.xml file is not found."
+            exit 1
+          fi
+
       - name: Run Bash script
         run: |
           #!/bin/bash
