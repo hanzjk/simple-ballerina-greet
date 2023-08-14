@@ -60,7 +60,7 @@ jobs:
             exit 1
           fi
 
-      - name: Run Bash script
+      - name: Validate Main Sequence
         run: |
           #!/bin/bash
 
