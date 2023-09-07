@@ -1,0 +1,10 @@
+can not create api key using given doc
+can not get store name that easily 
+zensupport:Client baseClientZen = check new (clientConfig, serviceUrl = "https://wda2720.zendesk.com");
+zensupport:ClientConfig there is no such
+
+
+create an store, create an app and intall, get token for it
+"error PayloadBindingClientError (\"Payload binding failed: \'map<json>\' value cannot be converted to \'shopify.admin:RefundObject\': \n\t\t{\n\t\t  {\n\t\t    field \'refund.order_adjustments[0].amount\' in record \'shopify.admin:OrderAdjustment\' should be of type \'int?\', found \'\"232.00\"\'\n\t\t  }\n\t\t}\",error(\"{ballerina/lang.value}ConversionError\",message=\"\'map<json>\' value cannot be converted to \'shopify.admin:RefundObject\': \n\t\t{\n\t\t  {\n\t\t    field \'refund.order_adjustments[0].amount\' in record \'shopify.admin:OrderAdjustment\' should be of type \'int?\', found \'\"232.00\"\'\n\t\t  }\n\t\t}\"))"
+
+zendesk createTicket return type mis match issue
