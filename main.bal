@@ -10,8 +10,6 @@ configurable string zendeskUsername = ?;
 configurable string zendeskPassword = ?;
 configurable string zendeskSubDomain = ?;
 
-// new token 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
-// old token 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
 
 // shopify client
 shopifyAdmin:ApiKeysConfig shopifyConfig = {
