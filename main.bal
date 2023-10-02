@@ -1,5 +1,6 @@
 import ballerina/io;
 import ballerina/http;
+import ballerinax/trigger.github;
 
 configurable github:ListenerConfig config = ?;
 configurable string toEmail = ?;
