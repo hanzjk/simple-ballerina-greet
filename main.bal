@@ -5,7 +5,10 @@ import ballerinax/trigger.github;
 configurable github:ListenerConfig config = ?;
 configurable string toEmail = ?;
 
-service / on new http:Listener(8090) {
+listener http:Listener httpListener = new (8090);
+listener github:Listener webhookListener = new (config, httpListener);
+
+service / on webhookListener {
     resource function post greeting/hello() returns string {
         io:println("Invoked hello resource");
         return "Hello, World!";
