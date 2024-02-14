@@ -28,6 +28,6 @@ service / on new http:Listener(9090) {
         if salesAdmin is "" {
             return error("name cannot be empty !");
         }
-        return "Hellooo, " + salesAdmin;
+        return "Helloo, " + salesAdmin;
     }
 }
